@@ -62,8 +62,49 @@
     </script>
     <script>
         const encryptedContent = new Uint8Array(ENCRYPTED_CONTENT_PLACEHOLDER);
+        const CACHE_KEY = 'decryptedContentCache';
+        const CACHE_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 
-        function decryptContent() {
+        function getHash(content) {
+            return crypto.subtle.digest('SHA-256', content).then(hashBuffer => {
+                return Array.from(new Uint8Array(hashBuffer))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
+            });
+        }
+
+        async function initializePage() {
+            const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY));
+            const currentTime = Date.now();
+
+            if (cachedData && currentTime - cachedData.timestamp < CACHE_TIMEOUT) {
+                const cachedHash = cachedData.hash;
+                const currentHash = await getHash(encryptedContent);
+
+                if (cachedHash === currentHash) {
+                    // Use cached content
+                    document.body.innerHTML = cachedData.content;
+                    return;
+                }
+            }
+
+            // If no valid cache, show the decryption UI
+            const wrapper = document.createElement('div');
+            wrapper.className = 'wrapper';
+            wrapper.innerHTML = `
+                <div class="container">
+                    <input type="password" id="password" placeholder="Enter password">
+                    <button onclick="decryptContent()">Decrypt</button>
+                </div>
+            `;
+            document.body.innerHTML = '';
+            document.body.appendChild(wrapper);
+        }
+
+        // Initialize the page on load
+        initializePage();
+
+        async function decryptContent() {
             const password = document.getElementById('password').value;
             const wrapper = document.querySelector('.wrapper');
 
@@ -79,6 +120,20 @@
 
                 const encoder = new TextEncoder();
                 const keyMaterial = encoder.encode(password);
+
+                const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY));
+                const currentTime = Date.now();
+
+                if (cachedData && currentTime - cachedData.timestamp < CACHE_TIMEOUT) {
+                    const cachedHash = cachedData.hash;
+                    const currentHash = await getHash(encryptedContent);
+
+                    if (cachedHash === currentHash) {
+                        document.body.innerHTML = cachedData.content;
+                        return;
+                    }
+                }
+
                 window.crypto.subtle.importKey(
                     'raw',
                     keyMaterial,
@@ -104,12 +159,11 @@
                         cryptoKey,
                         ciphertext
                     );
-                }).then(decryptedBuffer => {
+                }).then(async decryptedBuffer => {
                     const decoder = new TextDecoder();
                     const plaintext = decoder.decode(decryptedBuffer);
 
                     if (plaintext.trim().startsWith('<!DOCTYPE html>')) {
-                        // parse and apply title from first H1, if available
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(plaintext, 'text/html');
                         const h1 = doc.querySelector('h1');
@@ -121,14 +175,23 @@
                         container.innerHTML = plaintext;
                         document.body.innerHTML = '';
                         document.body.appendChild(container);
+
+                        const hash = await getHash(encryptedContent);
+                        localStorage.setItem(CACHE_KEY, JSON.stringify({
+                            content: document.body.innerHTML,
+                            timestamp: Date.now(),
+                            hash: hash
+                        }));
                     } else {
                         throw new Error('Decrypted content is not valid HTML.');
                     }
                 }).catch(error => {
-                    throw error;
+                    alert('Decryption failed. Please check your password.');
+                    console.error(error);
                 });
             } catch (error) {
-                throw error;
+                alert('An error occurred during decryption.');
+                console.error(error);
             }
         }
 
