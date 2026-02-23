@@ -13,18 +13,18 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import Literal
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.hazmat.backends import default_backend
 import os
-import base64
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 # Constants
@@ -107,8 +107,8 @@ def decrypt_file(input_path: Path, password: str) -> None:
 
         # Extract salt, IV, and ciphertext
         salt = data[:SALT_SIZE]
-        iv = data[SALT_SIZE:SALT_SIZE + IV_SIZE]
-        ciphertext = data[SALT_SIZE + IV_SIZE:]
+        iv = data[SALT_SIZE : SALT_SIZE + IV_SIZE]
+        ciphertext = data[SALT_SIZE + IV_SIZE :]
 
         # Derive key
         key = derive_key(password, salt)
@@ -141,13 +141,23 @@ def main() -> None:
 
         # Encrypt command
         encrypt_parser = subparsers.add_parser("encrypt", help="Encrypt an HTML file.")
-        encrypt_parser.add_argument("input", type=Path, help="Path to the input HTML file.")
-        encrypt_parser.add_argument("--password", required=True, help="Password for encryption.")
+        encrypt_parser.add_argument(
+            "input", type=Path, help="Path to the input HTML file."
+        )
+        encrypt_parser.add_argument(
+            "--password", required=True, help="Password for encryption."
+        )
 
         # Decrypt command
-        decrypt_parser = subparsers.add_parser("decrypt", help="Decrypt an encrypted HTML file.")
-        decrypt_parser.add_argument("input", type=Path, help="Path to the encrypted HTML file.")
-        decrypt_parser.add_argument("--password", required=True, help="Password for decryption.")
+        decrypt_parser = subparsers.add_parser(
+            "decrypt", help="Decrypt an encrypted HTML file."
+        )
+        decrypt_parser.add_argument(
+            "input", type=Path, help="Path to the encrypted HTML file."
+        )
+        decrypt_parser.add_argument(
+            "--password", required=True, help="Password for decryption."
+        )
 
         args = parser.parse_args()
 
