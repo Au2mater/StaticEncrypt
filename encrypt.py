@@ -110,11 +110,6 @@ def decrypt_file(input_path: Path, password: str) -> None:
         iv = data[SALT_SIZE:SALT_SIZE + IV_SIZE]
         ciphertext = data[SALT_SIZE + IV_SIZE:]
 
-        # Debugging logs
-        logger.debug(f"Salt: {salt.hex()}")
-        logger.debug(f"IV: {iv.hex()}")
-        logger.debug(f"Ciphertext: {ciphertext[:64].hex()}... (truncated)")
-
         # Derive key
         key = derive_key(password, salt)
 
