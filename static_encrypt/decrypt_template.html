@@ -41,22 +41,12 @@
         button:hover {
             background-color: #0056b3;
         }
-        #output {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background: #f9f9f9;
-            white-space: pre-wrap;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Decrypt Content</h1>
         <input type="password" id="password" placeholder="Enter password">
         <button onclick="decryptContent()">Decrypt</button>
-        <div id="output"></div>
     </div>
 
     <!-- JavaScript copied from https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js -->
@@ -113,9 +103,10 @@
                     const plaintext = decoder.decode(decryptedBuffer);
 
                     if (plaintext.trim().startsWith('<!DOCTYPE html>')) {
-                        const newWindow = window.open('', '_blank');
-                        newWindow.document.write(plaintext);
-                        newWindow.document.close();
+                        const container = document.createElement('div');
+                        container.innerHTML = plaintext;
+                        document.body.innerHTML = '';
+                        document.body.appendChild(container);
                     } else {
                         output.textContent = plaintext;
                         throw new Error('Decrypted content is not valid HTML.');
