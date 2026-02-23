@@ -10,7 +10,6 @@ This script reads a markdown file and writes a basic HTML conversion. It uses th
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import markdown
@@ -38,9 +37,7 @@ def main() -> None:
 
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Convert a Markdown file to HTML."
-    )
+    parser = argparse.ArgumentParser(description="Convert a Markdown file to HTML.")
     parser.add_argument(
         "input",
         type=Path,
