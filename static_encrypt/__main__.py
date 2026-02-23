@@ -1,16 +1,16 @@
 import argparse
 from pathlib import Path
 from md2html import convert_markdown_to_html
-from encrypt import encrypt_file
+from encrypt import encrypt_file, decrypt_file
 
 
 def create_static_decrypt_html(encrypted_content: bytes, output_path: Path):
     """Generate a static HTML file with embedded encrypted content."""
     template = f"""<!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-    <meta charset=\"UTF-8\">
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Decrypt Embedded Content</title>
     <style>
         body {{
@@ -29,7 +29,7 @@ def create_static_decrypt_html(encrypted_content: bytes, output_path: Path):
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }}
-        input[type=\"password\"] {{
+        input[type="password"] {{
             display: block;
             margin: 10px auto;
             padding: 10px;
@@ -60,14 +60,14 @@ def create_static_decrypt_html(encrypted_content: bytes, output_path: Path):
     </style>
 </head>
 <body>
-    <div class=\"container\">
+    <div class="container">
         <h1>Decrypt Content</h1>
-        <input type=\"password\" id=\"password\" placeholder=\"Enter password\">
-        <button onclick=\"decryptContent()\">Decrypt</button>
-        <div id=\"output\"></div>
+        <input type="password" id="password" placeholder="Enter password">
+        <button onclick="decryptContent()">Decrypt</button>
+        <div id="output"></div>
     </div>
 
-    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js\"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script>
         const encryptedContent = new Uint8Array({list(encrypted_content)});
 
@@ -141,58 +141,100 @@ def create_static_decrypt_html(encrypted_content: bytes, output_path: Path):
 def main():
     import logging
 
-    parser = argparse.ArgumentParser(description="Convert, encrypt, and embed Markdown content.")
-    parser.add_argument(
+    parser = argparse.ArgumentParser(description="StaticEncrypt CLI Tool")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # Protect command
+    protect_parser = subparsers.add_parser("protect", help="Convert, encrypt, and embed Markdown content.")
+    protect_parser.add_argument(
         "--markdown_file",
         type=Path,
         required=True,
         help="Path to the input Markdown file.",
     )
-    parser.add_argument(
+    protect_parser.add_argument(
         "--password",
         type=str,
         required=True,
         help="Password for encryption.",
     )
-    parser.add_argument(
+    protect_parser.add_argument(
         "--output_file",
         type=Path,
         help="Optional path to the output HTML file. If omitted, a name will be generated in the current directory.",
     )
-    args = parser.parse_args()
 
-    # Determine output location
-    if args.output_file is None:
-        default_name = f"{args.markdown_file.stem}.protected.html"
-        args.output_file = Path.cwd() / default_name
+    # Encrypt command
+    encrypt_parser = subparsers.add_parser("encrypt", help="Encrypt an HTML file.")
+    encrypt_parser.add_argument(
+        "--input_file",
+        type=Path,
+        required=True,
+        help="Path to the input HTML file.",
+    )
+    encrypt_parser.add_argument(
+        "--password",
+        type=str,
+        required=True,
+        help="Password for encryption.",
+    )
+
+    # Decrypt command
+    decrypt_parser = subparsers.add_parser("decrypt", help="Decrypt an encrypted HTML file.")
+    decrypt_parser.add_argument(
+        "--input_file",
+        type=Path,
+        required=True,
+        help="Path to the encrypted HTML file.",
+    )
+    decrypt_parser.add_argument(
+        "--password",
+        type=str,
+        required=True,
+        help="Password for decryption.",
+    )
+
+    args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
     logger = logging.getLogger(__name__)
 
-    logger.info(f"Output file: {args.output_file}")
-    print(f"Output file: {args.output_file}")
+    if args.command == "protect":
+        # Determine output location
+        if args.output_file is None:
+            default_name = f"{args.markdown_file.stem}.protected.html"
+            args.output_file = Path.cwd() / default_name
 
-    # Convert Markdown to HTML
-    markdown_content = args.markdown_file.read_text(encoding="utf-8")
-    html_content = convert_markdown_to_html(markdown_content)
+        logger.info(f"Output file: {args.output_file}")
+        print(f"Output file: {args.output_file}")
 
-    # Save intermediate HTML file
-    intermediate_html_path = args.markdown_file.with_suffix(".html")
-    intermediate_html_path.write_text(html_content, encoding="utf-8")
+        # Convert Markdown to HTML
+        markdown_content = args.markdown_file.read_text(encoding="utf-8")
+        html_content = convert_markdown_to_html(markdown_content)
 
-    # Encrypt the HTML file
-    encrypt_file(intermediate_html_path, args.password)
+        # Save intermediate HTML file
+        intermediate_html_path = args.markdown_file.with_suffix(".html")
+        intermediate_html_path.write_text(html_content, encoding="utf-8")
 
-    # Read the encrypted content
-    encrypted_path = intermediate_html_path.with_name(f"{intermediate_html_path.stem}-encrypted.html")
-    encrypted_content = encrypted_path.read_bytes()
+        # Encrypt the HTML file
+        encrypt_file(intermediate_html_path, args.password)
 
-    # Create the static decrypt HTML file
-    create_static_decrypt_html(encrypted_content, args.output_file)
+        # Read the encrypted content
+        encrypted_path = intermediate_html_path.with_name(f"{intermediate_html_path.stem}-encrypted.html")
+        encrypted_content = encrypted_path.read_bytes()
 
-    # Clean up intermediate files
-    intermediate_html_path.unlink()
-    encrypted_path.unlink()
+        # Create the static decrypt HTML file
+        create_static_decrypt_html(encrypted_content, args.output_file)
+
+        # Clean up intermediate files
+        intermediate_html_path.unlink()
+        encrypted_path.unlink()
+
+    elif args.command == "encrypt":
+        encrypt_file(args.input_file, args.password)
+
+    elif args.command == "decrypt":
+        decrypt_file(args.input_file, args.password)
 
 
 if __name__ == "__main__":
