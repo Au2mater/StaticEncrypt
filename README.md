@@ -18,8 +18,19 @@ StaticEncrypt is a Python-based tool designed to help users host secure, passwor
 Use the `protect` command to convert, encrypt, and embed Markdown content into a password-protected static site:
 
 ```bash
-python -m static_encrypt protect --markdown_file <path-to-markdown> --password <encryption-password>
+python -m static_encrypt protect --markdown_file <path-to-markdown> --password <encryption-password> [--style <path-to-css>]
 ```
+
+- `--style`: Optional. Path to a CSS file to style the generated HTML.
+
+### Convert Command
+Use the `convert` command to convert a Markdown file to HTML:
+
+```bash
+python -m static_encrypt convert --input_file <path-to-markdown> [--output_file <path-to-html>] [--style <path-to-css>]
+```
+
+- `--style`: Optional. Path to a CSS file to style the generated HTML.
 
 ### Encrypt Command
 Use the `encrypt` command to encrypt an HTML file:
@@ -37,7 +48,7 @@ python -m static_encrypt decrypt --input_file <path-to-encrypted-html> --passwor
 
 ### Example
 ```bash
-python -m static_encrypt protect --markdown_file ./resources/sample.md --password "YourPassword123"
+python -m static_encrypt protect --markdown_file ./resources/sample.md --password "YourPassword123" --style ./resources/style.css
 ```
 
 This will:

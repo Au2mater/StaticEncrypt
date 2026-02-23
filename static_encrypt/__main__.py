@@ -37,6 +37,11 @@ def main():
         type=Path,
         help="Optional path to the output HTML file. If omitted, a name will be generated in the current directory.",
     )
+    protect_parser.add_argument(
+        "--style",
+        type=Path,
+        help="Path to an optional CSS file to include in the HTML.",
+    )
 
     # Encrypt command
     encrypt_parser = subparsers.add_parser("encrypt", help="Encrypt an HTML file.")
@@ -111,7 +116,14 @@ def main():
 
             # Convert Markdown to HTML
             markdown_content = args.markdown_file.read_text(encoding="utf-8")
-            html_content = convert_markdown_to_html(markdown_content)
+
+            css_content = ""
+            if args.style:
+                if not args.style.is_file():
+                    parser.error(f"CSS file does not exist: {args.style}")
+                css_content = args.style.read_text(encoding="utf-8")
+
+            html_content = convert_markdown_to_html(markdown_content, css_content)
 
             # Save intermediate HTML file
             intermediate_html_path = args.markdown_file.with_suffix(".html")
