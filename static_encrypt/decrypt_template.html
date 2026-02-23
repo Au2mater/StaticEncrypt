@@ -6,13 +6,11 @@
     <title>Decrypt Embedded Content</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
+            min-height: 100vh;
+            overflow: auto;
         }
         .container {
             text-align: center;
@@ -41,12 +39,20 @@
         button:hover {
             background-color: #0056b3;
         }
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <input type="password" id="password" placeholder="Enter password">
-        <button onclick="decryptContent()">Decrypt</button>
+    <div class="wrapper">
+        <div class="container">
+            <input type="password" id="password" placeholder="Enter password">
+            <button onclick="decryptContent()">Decrypt</button>
+        </div>
     </div>
 
     <!-- JavaScript copied from https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js -->
@@ -59,7 +65,7 @@
 
         function decryptContent() {
             const password = document.getElementById('password').value;
-            const output = document.getElementById('output');
+            const wrapper = document.querySelector('.wrapper');
 
             if (!password) {
                 alert('Please provide a password.');
@@ -108,14 +114,13 @@
                         document.body.innerHTML = '';
                         document.body.appendChild(container);
                     } else {
-                        output.textContent = plaintext;
                         throw new Error('Decrypted content is not valid HTML.');
                     }
                 }).catch(error => {
-                    output.textContent = 'Error: ' + error.message;
+                    throw error;
                 });
             } catch (error) {
-                output.textContent = 'Error: ' + error.message;
+                throw error;
             }
         }
     </script>
