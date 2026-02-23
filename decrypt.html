@@ -117,7 +117,19 @@
                     }).then(decryptedBuffer => {
                         const decoder = new TextDecoder();
                         const plaintext = decoder.decode(decryptedBuffer);
-                        output.textContent = plaintext;
+
+                        // Log decrypted content for debugging
+                        console.log('Decrypted content:', plaintext);
+
+                        // Validate and render the decrypted HTML
+                        if (plaintext.trim().startsWith('<!DOCTYPE html>')) {
+                            const newWindow = window.open('', '_blank');
+                            newWindow.document.write(plaintext);
+                            newWindow.document.close();
+                        } else {
+                            output.textContent = plaintext; // Display content for inspection
+                            throw new Error('Decrypted content is not valid HTML.');
+                        }
                     }).catch(error => {
                         output.textContent = 'Error: ' + error.message;
                     });
