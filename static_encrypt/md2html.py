@@ -26,7 +26,8 @@ def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
         A string of HTML wrapped in a full document.
     """
 
-    body_html = markdown.markdown(markdown_text)
+    # Enable the 'tables' extension for proper table rendering
+    body_html = markdown.markdown(markdown_text, extensions=["tables"])
 
     style_tag = f"<style>{css_content}</style>\n" if css_content else ""
 
