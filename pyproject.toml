@@ -1,7 +1,7 @@
 [project]
-name = "2602-staticencrypt"
+name = "staticencrypt"
 version = "0.1.0"
-description = "Add your description here"
+description = "host secure, password-protected static sites"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
