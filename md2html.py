@@ -22,11 +22,27 @@ def convert_markdown_to_html(markdown_text: str) -> str:
         markdown_text: A markdown-formatted string.
 
     Returns:
-        A string of HTML.
+        A string of HTML wrapped in a full document.
     """
 
-    # We keep this simple; the markdown library already does safe escaping.
-    return markdown.markdown(markdown_text)
+    # Base HTML document with DOCTYPE, head, and body container.  We don't
+    # attempt to be fancy; the markdown library handles the markup for the
+    # contents.
+    body_html = markdown.markdown(markdown_text)
+
+    return (
+        "<!DOCTYPE html>\n"
+        '<html lang="en">\n'
+        "<head>\n"
+        '  <meta charset="utf-8">\n'
+        '  <meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        "  <title>Markdown Conversion</title>\n"
+        "</head>\n"
+        "<body>\n"
+        f"{body_html}\n"
+        "</body>\n"
+        "</html>\n"
+    )
 
 
 def main() -> None:
