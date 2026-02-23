@@ -15,6 +15,21 @@ import re
 import html
 
 import markdown
+import markdown.extensions.extra
+import markdown.extensions.admonition
+import markdown.extensions.md_in_html
+
+
+def preprocess_markdown(markdown_text: str) -> str:
+    """Preprocess markdown text to handle custom syntax like checkboxes and strikethrough."""
+    # Replace [ ] and [x] with input checkboxes
+    markdown_text = re.sub(r"\[ \]", '<input type="checkbox">', markdown_text)
+    markdown_text = re.sub(r"\[x\]", '<input type="checkbox" checked>', markdown_text)
+
+    # Replace ~~text~~ with <del>text</del>
+    markdown_text = re.sub(r"~~(.*?)~~", lambda m: f"<del>{m.group(1)}</del>", markdown_text)
+
+    return markdown_text
 
 
 def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
@@ -28,8 +43,10 @@ def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
         A string of HTML wrapped in a full document.
     """
 
-    # Enable the 'tables' extension for proper table rendering
-    # determine page title from first level-1 heading if present
+    # Preprocess markdown for custom syntax
+    markdown_text = preprocess_markdown(markdown_text)
+
+    # Enable the 'tables', 'extra', and 'admonition' extensions for proper rendering
     title = "Markdown Conversion"
     for line in markdown_text.splitlines():
         m = re.match(r"^\s*#\s+(.*)", line)
@@ -37,7 +54,10 @@ def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
             title = m.group(1).strip()
             break
 
-    body_html = markdown.markdown(markdown_text, extensions=["tables"])
+    body_html = markdown.markdown(
+        markdown_text,
+        extensions=["tables", "extra", "admonition", "md_in_html"]
+    )
 
     style_tag = f"<style>{css_content}</style>\n" if css_content else ""
 
