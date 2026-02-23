@@ -109,6 +109,14 @@
                     const plaintext = decoder.decode(decryptedBuffer);
 
                     if (plaintext.trim().startsWith('<!DOCTYPE html>')) {
+                        // parse and apply title from first H1, if available
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(plaintext, 'text/html');
+                        const h1 = doc.querySelector('h1');
+                        if (h1 && h1.textContent) {
+                            document.title = h1.textContent.trim();
+                        }
+
                         const container = document.createElement('div');
                         container.innerHTML = plaintext;
                         document.body.innerHTML = '';
