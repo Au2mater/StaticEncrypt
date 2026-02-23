@@ -74,35 +74,42 @@ def main():
     logger = logging.getLogger(__name__)
 
     if args.command == "protect":
-        # Determine output location
-        if args.output_file is None:
-            default_name = f"{args.markdown_file.stem}.protected.html"
-            args.output_file = Path.cwd() / default_name
+        intermediate_html_path = None
+        encrypted_path = None
 
-        logger.info(f"Output file: {args.output_file}")
-        print(f"Output file: {args.output_file}")
+        try:
+            # Determine output location
+            if args.output_file is None:
+                default_name = f"{args.markdown_file.stem}.protected.html"
+                args.output_file = Path.cwd() / default_name
 
-        # Convert Markdown to HTML
-        markdown_content = args.markdown_file.read_text(encoding="utf-8")
-        html_content = convert_markdown_to_html(markdown_content)
+            logger.info(f"Output file: {args.output_file}")
 
-        # Save intermediate HTML file
-        intermediate_html_path = args.markdown_file.with_suffix(".html")
-        intermediate_html_path.write_text(html_content, encoding="utf-8")
+            # Convert Markdown to HTML
+            markdown_content = args.markdown_file.read_text(encoding="utf-8")
+            html_content = convert_markdown_to_html(markdown_content)
 
-        # Encrypt the HTML file
-        encrypt_file(intermediate_html_path, args.password)
+            # Save intermediate HTML file
+            intermediate_html_path = args.markdown_file.with_suffix(".html")
+            intermediate_html_path.write_text(html_content, encoding="utf-8")
 
-        # Read the encrypted content
-        encrypted_path = intermediate_html_path.with_name(f"{intermediate_html_path.stem}-encrypted.html")
-        encrypted_content = encrypted_path.read_bytes()
+            # Encrypt the HTML file
+            encrypt_file(intermediate_html_path, args.password)
 
-        # Create the static decrypt HTML file
-        create_static_decrypt_html(encrypted_content, args.output_file)
+            # Read the encrypted content
+            encrypted_path = intermediate_html_path.with_name(f"{intermediate_html_path.stem}-encrypted.html")
+            encrypted_content = encrypted_path.read_bytes()
 
-        # Clean up intermediate files
-        intermediate_html_path.unlink()
-        encrypted_path.unlink()
+            # Create the static decrypt HTML file
+            create_static_decrypt_html(encrypted_content, args.output_file)
+        except Exception as e:
+            logger.error(f"An error occurred: {e}")
+        finally:
+            # Clean up intermediate files
+            if intermediate_html_path and intermediate_html_path.exists():
+                intermediate_html_path.unlink()
+            if encrypted_path and encrypted_path.exists():
+                encrypted_path.unlink()
 
     elif args.command == "encrypt":
         encrypt_file(args.input_file, args.password)
