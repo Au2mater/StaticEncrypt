@@ -15,11 +15,13 @@ This is a paragraph with **bold** text and *italic* text.
 Here is a link to [Google](https://www.google.com).
 Here is an image:
 ![Sample Image](https://picsum.photos/150)
+
 ```python
 # This is a code block
 def hello_world():
     print("Hello, world!")
 ```
+
 > This is a blockquote. It is used to indicate a quote or a piece of text that is being cited from another source.
 > It can also be used to highlight important information or to provide additional context to the reader.
 > This is the end of the blockquote.
