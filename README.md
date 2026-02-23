@@ -1,6 +1,6 @@
 # StaticEncrypt
 
-StaticEncrypt is a Python-based toolchain designed to help users host secure, password-protected static sites. It provides the following functionality:
+StaticEncrypt is a Python-based tool designed to help users host secure, password-protected static sites. It provides the following functionality:
 
 1. **Markdown to HTML Conversion**: Converts Markdown files into HTML using the `md2html.py` script.
 2. **HTML Encryption**: Encrypts HTML files with a password using the `encrypt.py` script, ensuring secure storage and transmission.
