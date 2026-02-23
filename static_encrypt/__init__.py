@@ -1,3 +1,2 @@
-from static_encrypt.__main__ import main as main
-import encrypt as encrypt
-import md2html as md2html 
+from . import encrypt as encrypt
+from . import md2html as md2html

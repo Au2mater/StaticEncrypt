@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
-from md2html import convert_markdown_to_html
-from encrypt import encrypt_file, decrypt_file
+from .md2html import convert_markdown_to_html
+from .encrypt import encrypt_file, decrypt_file
 
 
 def create_static_decrypt_html(encrypted_content: bytes, output_path: Path):

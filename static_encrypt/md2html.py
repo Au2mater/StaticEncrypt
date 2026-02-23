@@ -11,6 +11,8 @@ This script reads a markdown file and writes a basic HTML conversion. It uses th
 from __future__ import annotations
 
 from pathlib import Path
+import re
+import html
 
 import markdown
 
@@ -27,6 +29,14 @@ def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
     """
 
     # Enable the 'tables' extension for proper table rendering
+    # determine page title from first level-1 heading if present
+    title = "Markdown Conversion"
+    for line in markdown_text.splitlines():
+        m = re.match(r"^\s*#\s+(.*)", line)
+        if m:
+            title = m.group(1).strip()
+            break
+
     body_html = markdown.markdown(markdown_text, extensions=["tables"])
 
     style_tag = f"<style>{css_content}</style>\n" if css_content else ""
@@ -37,7 +47,7 @@ def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
         "<head>\n"
         '  <meta charset="utf-8">\n'
         '  <meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        "  <title>Markdown Conversion</title>\n"
+        f"  <title>{html.escape(title)}</title>\n"
         f"  {style_tag}"
         "</head>\n"
         "<body>\n"

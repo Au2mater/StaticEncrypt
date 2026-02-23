@@ -8,3 +8,11 @@ dependencies = [
     "cryptography>=46.0.5",
     "markdown>=3.10.2",
 ]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
