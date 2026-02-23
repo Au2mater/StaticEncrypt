@@ -52,6 +52,11 @@ def main():
         required=True,
         help="Password for encryption.",
     )
+    encrypt_parser.add_argument(
+        "--output_file",
+        type=Path,
+        help="Optional path to the output encrypted file. If omitted, a name will be generated in the current directory.",
+    )
 
     # Decrypt command
     decrypt_parser = subparsers.add_parser("decrypt", help="Decrypt an encrypted HTML file.")
@@ -66,6 +71,20 @@ def main():
         type=str,
         required=True,
         help="Password for decryption.",
+    )
+
+    # Convert command
+    convert_parser = subparsers.add_parser("convert", help="Convert a Markdown file to HTML.")
+    convert_parser.add_argument(
+        "--input_file",
+        type=Path,
+        required=True,
+        help="Path to the input Markdown file.",
+    )
+    convert_parser.add_argument(
+        "--output_file",
+        type=Path,
+        help="Optional path to the output HTML file. If omitted, the output file will be named {input_file.stem}.html.",
     )
 
     args = parser.parse_args()
@@ -116,6 +135,18 @@ def main():
 
     elif args.command == "decrypt":
         decrypt_file(args.input_file, args.password)
+
+    elif args.command == "convert":
+        input_file = args.input_file
+        output_file = args.output_file or input_file.with_suffix(".html")
+
+        if not input_file.is_file():
+            parser.error(f"Input file does not exist: {input_file}")
+
+        markdown_content = input_file.read_text(encoding="utf-8")
+        html_content = convert_markdown_to_html(markdown_content)
+        output_file.write_text(html_content, encoding="utf-8")
+        print(f"Converted {input_file} to {output_file}")
 
 
 if __name__ == "__main__":
