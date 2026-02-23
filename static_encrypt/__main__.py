@@ -86,6 +86,11 @@ def main():
         type=Path,
         help="Optional path to the output HTML file. If omitted, the output file will be named {input_file.stem}.html.",
     )
+    convert_parser.add_argument(
+        "--style",
+        type=Path,
+        help="Path to an optional CSS file to include in the HTML.",
+    )
 
     args = parser.parse_args()
 
@@ -139,12 +144,19 @@ def main():
     elif args.command == "convert":
         input_file = args.input_file
         output_file = args.output_file or input_file.with_suffix(".html")
+        style_file = args.style
 
         if not input_file.is_file():
             parser.error(f"Input file does not exist: {input_file}")
 
+        css_content = ""
+        if style_file:
+            if not style_file.is_file():
+                parser.error(f"CSS file does not exist: {style_file}")
+            css_content = style_file.read_text(encoding="utf-8")
+
         markdown_content = input_file.read_text(encoding="utf-8")
-        html_content = convert_markdown_to_html(markdown_content)
+        html_content = convert_markdown_to_html(markdown_content, css_content)
         output_file.write_text(html_content, encoding="utf-8")
         print(f"Converted {input_file} to {output_file}")
 

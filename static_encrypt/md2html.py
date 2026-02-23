@@ -15,20 +15,20 @@ from pathlib import Path
 import markdown
 
 
-def convert_markdown_to_html(markdown_text: str) -> str:
-    """Convert markdown string to HTML.
+def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
+    """Convert markdown string to HTML with optional CSS.
 
     Args:
         markdown_text: A markdown-formatted string.
+        css_content: A string containing CSS to embed in the HTML.
 
     Returns:
         A string of HTML wrapped in a full document.
     """
 
-    # Base HTML document with DOCTYPE, head, and body container.  We don't
-    # attempt to be fancy; the markdown library handles the markup for the
-    # contents.
     body_html = markdown.markdown(markdown_text)
+
+    style_tag = f"<style>{css_content}</style>\n" if css_content else ""
 
     return (
         "<!DOCTYPE html>\n"
@@ -37,6 +37,7 @@ def convert_markdown_to_html(markdown_text: str) -> str:
         '  <meta charset="utf-8">\n'
         '  <meta name="viewport" content="width=device-width, initial-scale=1">\n'
         "  <title>Markdown Conversion</title>\n"
+        f"  {style_tag}"
         "</head>\n"
         "<body>\n"
         f"{body_html}\n"
@@ -64,16 +65,28 @@ def main() -> None:
         type=Path,
         help="Path for the generated HTML file",
     )
+    parser.add_argument(
+        "--style",
+        type=Path,
+        help="Path to an optional CSS file to include in the HTML.",
+    )
     args = parser.parse_args()
 
     input_path = args.input
     output_path = args.output
+    style_path = args.style
 
     if not input_path.is_file():
-        parser.error(f"input file does not exist: {input_path}")
+        parser.error(f"Input file does not exist: {input_path}")
+
+    css_content = ""
+    if style_path:
+        if not style_path.is_file():
+            parser.error(f"CSS file does not exist: {style_path}")
+        css_content = style_path.read_text(encoding="utf-8")
 
     markdown_content = input_path.read_text(encoding="utf-8")
-    html_content = convert_markdown_to_html(markdown_content)
+    html_content = convert_markdown_to_html(markdown_content, css_content)
     output_path.write_text(html_content, encoding="utf-8")
 
 
