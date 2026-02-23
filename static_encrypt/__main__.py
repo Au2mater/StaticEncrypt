@@ -42,6 +42,11 @@ def main():
         type=Path,
         help="Path to an optional CSS file to include in the HTML.",
     )
+    protect_parser.add_argument(
+        "--allow-unsafe-password",
+        action="store_true",
+        help="Skip password strength validation when encrypting (unsafe).",
+    )
 
     # Encrypt command
     encrypt_parser = subparsers.add_parser("encrypt", help="Encrypt an HTML file.")
@@ -61,6 +66,11 @@ def main():
         "--output_file",
         type=Path,
         help="Optional path to the output encrypted file. If omitted, a name will be generated in the current directory.",
+    )
+    encrypt_parser.add_argument(
+        "--allow-unsafe-password",
+        action="store_true",
+        help="Skip password strength validation (unsafe).",
     )
 
     # Decrypt command
@@ -130,7 +140,11 @@ def main():
             intermediate_html_path.write_text(html_content, encoding="utf-8")
 
             # Encrypt the HTML file
-            encrypt_file(intermediate_html_path, args.password)
+            encrypt_file(
+                intermediate_html_path,
+                args.password,
+                allow_unsafe=getattr(args, "allow_unsafe_password", False),
+            )
 
             # Read the encrypted content
             encrypted_path = intermediate_html_path.with_name(f"{intermediate_html_path.stem}-encrypted.html")
@@ -148,7 +162,11 @@ def main():
                 encrypted_path.unlink()
 
     elif args.command == "encrypt":
-        encrypt_file(args.input_file, args.password)
+        encrypt_file(
+            args.input_file,
+            args.password,
+            allow_unsafe=getattr(args, "allow_unsafe_password", False),
+        )
 
     elif args.command == "decrypt":
         decrypt_file(args.input_file, args.password)

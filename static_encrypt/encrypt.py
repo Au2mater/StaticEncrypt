@@ -65,10 +65,21 @@ def derive_key(password: str, salt: bytes) -> bytes:
     return kdf.derive(password.encode())
 
 
-def encrypt_file(input_path: Path, password: str) -> None:
-    """Encrypt an HTML file with the given password."""
+def encrypt_file(input_path: Path, password: str, allow_unsafe: bool = False) -> None:
+    """Encrypt an HTML file with the given password.
+
+    Args:
+        input_path: Path to the HTML file to encrypt.
+        password: User-supplied password.
+        allow_unsafe: If True, skip security validation of the password. This
+            is intended for users who knowingly accept the risks of a weak
+            password (e.g. for a quick test). The default is False.
+    """
     try:
-        validate_password(password)
+        # Password validation can be heavy-handed for some workflows; provide a
+        # flag to bypass it when the caller explicitly requests it.
+        if not allow_unsafe:
+            validate_password(password)
 
         # Read the input file
         plaintext = input_path.read_text(encoding="utf-8").encode("utf-8")
@@ -147,6 +158,11 @@ def main() -> None:
         encrypt_parser.add_argument(
             "--password", required=True, help="Password for encryption."
         )
+        encrypt_parser.add_argument(
+            "--allow-unsafe-password",
+            action="store_true",
+            help="Skip password strength validation (unsafe).",
+        )
 
         # Decrypt command
         decrypt_parser = subparsers.add_parser(
@@ -162,7 +178,7 @@ def main() -> None:
         args = parser.parse_args()
 
         if args.command == "encrypt":
-            encrypt_file(args.input, args.password)
+            encrypt_file(args.input, args.password, allow_unsafe=getattr(args, "allow_unsafe_password", False))
         elif args.command == "decrypt":
             decrypt_file(args.input, args.password)
     except Exception as e:
