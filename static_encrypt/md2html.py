@@ -24,7 +24,9 @@ def preprocess_markdown(markdown_text: str) -> str:
     markdown_text = re.sub(r"\[x\]", '<input type="checkbox" checked>', markdown_text)
 
     # Replace ~~text~~ with <del>text</del>
-    markdown_text = re.sub(r"~~(.*?)~~", lambda m: f"<del>{m.group(1)}</del>", markdown_text)
+    markdown_text = re.sub(
+        r"~~(.*?)~~", lambda m: f"<del>{m.group(1)}</del>", markdown_text
+    )
 
     return markdown_text
 
@@ -52,8 +54,7 @@ def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
             break
 
     body_html = markdown.markdown(
-        markdown_text,
-        extensions=["tables", "extra", "admonition", "md_in_html", "toc"]
+        markdown_text, extensions=["tables", "extra", "admonition", "md_in_html", "toc"]
     )
 
     style_tag = f"<style>{css_content}</style>\n" if css_content else ""
@@ -84,12 +85,14 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(description="Convert a Markdown file to HTML.")
     parser.add_argument(
-        "-i", "--input",
+        "-i",
+        "--input",
         type=Path,
         help="Path to the input markdown file",
     )
     parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         type=Path,
         help="Path for the generated HTML file",
     )

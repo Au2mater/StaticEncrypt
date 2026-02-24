@@ -17,4 +17,4 @@ def test_checkboxes_and_strikethrough():
     md = """[x] ~~Book Nikko World Heritage tour (if doing Friday)~~"""
     html = md2html.convert_markdown_to_html(md)
     assert '<input type="checkbox" checked>' in html
-    assert '<del>Book Nikko World Heritage tour (if doing Friday)</del>' in html
+    assert "<del>Book Nikko World Heritage tour (if doing Friday)</del>" in html

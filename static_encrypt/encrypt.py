@@ -178,7 +178,11 @@ def main() -> None:
         args = parser.parse_args()
 
         if args.command == "encrypt":
-            encrypt_file(args.input, args.password, allow_unsafe=getattr(args, "allow_unsafe_password", False))
+            encrypt_file(
+                args.input,
+                args.password,
+                allow_unsafe=getattr(args, "allow_unsafe_password", False),
+            )
         elif args.command == "decrypt":
             decrypt_file(args.input, args.password)
     except Exception as e:

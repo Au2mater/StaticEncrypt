@@ -8,7 +8,9 @@ def create_static_decrypt_html(encrypted_content: bytes, output_path: Path):
     """Generate a static HTML file with embedded encrypted content."""
     template_path = Path(__file__).parent / "decrypt_template.html"
     template = template_path.read_text(encoding="utf-8")
-    filled_template = template.replace("ENCRYPTED_CONTENT_PLACEHOLDER", str(list(encrypted_content)))
+    filled_template = template.replace(
+        "ENCRYPTED_CONTENT_PLACEHOLDER", str(list(encrypted_content))
+    )
     output_path.write_text(filled_template, encoding="utf-8")
 
 
@@ -19,9 +21,12 @@ def main():
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # Protect command
-    protect_parser = subparsers.add_parser("protect", help="Convert, encrypt, and embed Markdown content.")
+    protect_parser = subparsers.add_parser(
+        "protect", help="Convert, encrypt, and embed Markdown content."
+    )
     protect_parser.add_argument(
-        "-i", "--input",
+        "-i",
+        "--input",
         type=Path,
         required=True,
         help="Path to the input Markdown file.",
@@ -33,7 +38,8 @@ def main():
         help="Password for encryption.",
     )
     protect_parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         type=Path,
         help="Optional path to the output HTML file. If omitted, a name will be generated in the current directory.",
     )
@@ -51,7 +57,8 @@ def main():
     # Encrypt command
     encrypt_parser = subparsers.add_parser("encrypt", help="Encrypt an HTML file.")
     encrypt_parser.add_argument(
-        "-i", "--input",
+        "-i",
+        "--input",
         type=Path,
         required=True,
         help="Path to the input HTML file.",
@@ -63,7 +70,8 @@ def main():
         help="Password for encryption.",
     )
     encrypt_parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         type=Path,
         help="Optional path to the output encrypted file. If omitted, a name will be generated in the current directory.",
     )
@@ -74,9 +82,12 @@ def main():
     )
 
     # Decrypt command
-    decrypt_parser = subparsers.add_parser("decrypt", help="Decrypt an encrypted HTML file.")
+    decrypt_parser = subparsers.add_parser(
+        "decrypt", help="Decrypt an encrypted HTML file."
+    )
     decrypt_parser.add_argument(
-        "-i", "--input",
+        "-i",
+        "--input",
         type=Path,
         required=True,
         help="Path to the encrypted HTML file.",
@@ -89,15 +100,19 @@ def main():
     )
 
     # Convert command
-    convert_parser = subparsers.add_parser("convert", help="Convert a Markdown file to HTML.")
+    convert_parser = subparsers.add_parser(
+        "convert", help="Convert a Markdown file to HTML."
+    )
     convert_parser.add_argument(
-        "-i", "--input",
+        "-i",
+        "--input",
         type=Path,
         required=True,
         help="Path to the input Markdown file.",
     )
     convert_parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         type=Path,
         help="Optional path to the output HTML file. If omitted, a name will be generated in the current directory.",
     )
@@ -109,7 +124,9 @@ def main():
 
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
     logger = logging.getLogger(__name__)
 
     if args.command == "protect":
@@ -147,7 +164,9 @@ def main():
             )
 
             # Read the encrypted content
-            encrypted_path = intermediate_html_path.with_name(f"{intermediate_html_path.stem}-encrypted.html")
+            encrypted_path = intermediate_html_path.with_name(
+                f"{intermediate_html_path.stem}-encrypted.html"
+            )
             encrypted_content = encrypted_path.read_bytes()
 
             # Create the static decrypt HTML file
