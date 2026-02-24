@@ -21,7 +21,7 @@ def main():
     # Protect command
     protect_parser = subparsers.add_parser("protect", help="Convert, encrypt, and embed Markdown content.")
     protect_parser.add_argument(
-        "--markdown-file",
+        "--input",
         type=Path,
         required=True,
         help="Path to the input Markdown file.",
@@ -33,7 +33,7 @@ def main():
         help="Password for encryption.",
     )
     protect_parser.add_argument(
-        "--output_file",
+        "--output",
         type=Path,
         help="Optional path to the output HTML file. If omitted, a name will be generated in the current directory.",
     )
@@ -51,7 +51,7 @@ def main():
     # Encrypt command
     encrypt_parser = subparsers.add_parser("encrypt", help="Encrypt an HTML file.")
     encrypt_parser.add_argument(
-        "--input-file",
+        "--input",
         type=Path,
         required=True,
         help="Path to the input HTML file.",
@@ -63,7 +63,7 @@ def main():
         help="Password for encryption.",
     )
     encrypt_parser.add_argument(
-        "--output_file",
+        "--output",
         type=Path,
         help="Optional path to the output encrypted file. If omitted, a name will be generated in the current directory.",
     )
@@ -76,7 +76,7 @@ def main():
     # Decrypt command
     decrypt_parser = subparsers.add_parser("decrypt", help="Decrypt an encrypted HTML file.")
     decrypt_parser.add_argument(
-        "--input-file",
+        "--input",
         type=Path,
         required=True,
         help="Path to the encrypted HTML file.",
@@ -91,13 +91,13 @@ def main():
     # Convert command
     convert_parser = subparsers.add_parser("convert", help="Convert a Markdown file to HTML.")
     convert_parser.add_argument(
-        "--input-file",
+        "--input",
         type=Path,
         required=True,
         help="Path to the input Markdown file.",
     )
     convert_parser.add_argument(
-        "--output_file",
+        "--output",
         type=Path,
         help="Optional path to the output HTML file. If omitted, the output file will be named {input_file.stem}.html.",
     )
@@ -118,14 +118,14 @@ def main():
 
         try:
             # Determine output location
-            if args.output_file is None:
-                default_name = f"{args.markdown_file.stem}.protected.html"
-                args.output_file = Path.cwd() / default_name
+            if args.output is None:
+                default_name = f"{args.input.stem}.protected.html"
+                args.output = Path.cwd() / default_name
 
-            logger.info(f"Output file: {args.output_file}")
+            logger.info(f"Output file: {args.output}")
 
             # Convert Markdown to HTML
-            markdown_content = args.markdown_file.read_text(encoding="utf-8")
+            markdown_content = args.input.read_text(encoding="utf-8")
 
             css_content = ""
             if args.style:
@@ -136,7 +136,7 @@ def main():
             html_content = convert_markdown_to_html(markdown_content, css_content)
 
             # Save intermediate HTML file
-            intermediate_html_path = args.markdown_file.with_suffix(".html")
+            intermediate_html_path = args.input.with_suffix(".html")
             intermediate_html_path.write_text(html_content, encoding="utf-8")
 
             # Encrypt the HTML file
@@ -151,7 +151,7 @@ def main():
             encrypted_content = encrypted_path.read_bytes()
 
             # Create the static decrypt HTML file
-            create_static_decrypt_html(encrypted_content, args.output_file)
+            create_static_decrypt_html(encrypted_content, args.output)
         except Exception as e:
             logger.error(f"An error occurred: {e}")
         finally:
@@ -173,7 +173,7 @@ def main():
 
     elif args.command == "convert":
         input_file = args.input_file
-        output_file = args.output_file or input_file.with_suffix(".html")
+        output = args.output or input_file.with_suffix(".html")
         style_file = args.style
 
         if not input_file.is_file():
@@ -187,8 +187,8 @@ def main():
 
         markdown_content = input_file.read_text(encoding="utf-8")
         html_content = convert_markdown_to_html(markdown_content, css_content)
-        output_file.write_text(html_content, encoding="utf-8")
-        print(f"Converted {input_file} to {output_file}")
+        output.write_text(html_content, encoding="utf-8")
+        print(f"Converted {input_file} to {output}")
 
 
 if __name__ == "__main__":
