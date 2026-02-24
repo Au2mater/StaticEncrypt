@@ -14,7 +14,7 @@ def create_static_decrypt_html(encrypted_content: bytes, output_path: Path):
     output_path.write_text(filled_template, encoding="utf-8")
 
 
-def main():
+def main(args=None):
     import logging
 
     parser = argparse.ArgumentParser(description="StaticEncrypt CLI Tool")
@@ -29,7 +29,7 @@ def main():
         "--input",
         type=Path,
         required=True,
-        help="Path to the input Markdown file.",
+        help="Path to the input Markdown or HTML file.",
     )
     protect_parser.add_argument(
         "-p",
@@ -123,7 +123,8 @@ def main():
         help="Path to an optional CSS file to include in the HTML.",
     )
 
-    args = parser.parse_args()
+    if args is None:
+        args = parser.parse_args()
 
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -142,20 +143,43 @@ def main():
 
             logger.info(f"Output file: {args.output}")
 
-            # Convert Markdown to HTML
-            markdown_content = args.input.read_text(encoding="utf-8")
+            # Auto-infer file type
+            input_extension = args.input.suffix.lower()
+            if input_extension == ".md":
+                # Convert Markdown to HTML
+                markdown_content = args.input.read_text(encoding="utf-8")
 
-            css_content = ""
-            if args.style:
-                if not args.style.is_file():
-                    parser.error(f"CSS file does not exist: {args.style}")
-                css_content = args.style.read_text(encoding="utf-8")
+                css_content = ""
+                if args.style:
+                    if not args.style.is_file():
+                        parser.error(f"CSS file does not exist: {args.style}")
+                    css_content = args.style.read_text(encoding="utf-8")
 
-            html_content = convert_markdown_to_html(markdown_content, css_content)
+                html_content = convert_markdown_to_html(markdown_content, css_content)
 
-            # Save intermediate HTML file
-            intermediate_html_path = args.input.with_suffix(".html")
-            intermediate_html_path.write_text(html_content, encoding="utf-8")
+                # Save intermediate HTML file
+                intermediate_html_path = args.input.with_suffix(".html")
+                intermediate_html_path.write_text(html_content, encoding="utf-8")
+            elif input_extension == ".html":
+                # Handle HTML input directly
+                intermediate_html_path = args.input
+
+                if args.style:
+                    if not args.style.is_file():
+                        parser.error(f"CSS file does not exist: {args.style}")
+                    css_content = args.style.read_text(encoding="utf-8")
+
+                    # Inject CSS into HTML
+                    html_content = intermediate_html_path.read_text(encoding="utf-8")
+                    style_tag = f"<style>{css_content}</style>"
+                    html_content = html_content.replace("</head>", f"{style_tag}</head>")
+
+                    # Save modified HTML to a temporary file
+                    intermediate_html_path = args.input.with_suffix(".styled.html")
+                    intermediate_html_path.write_text(html_content, encoding="utf-8")
+            else:
+                logger.error(f"Unsupported file type: {input_extension}")
+                raise ValueError("Unsupported file type. Only .md and .html are supported.")
 
             # Encrypt the HTML file
             encrypt_file(
@@ -172,11 +196,13 @@ def main():
 
             # Create the static decrypt HTML file
             create_static_decrypt_html(encrypted_content, args.output)
+        except ValueError:
+            raise
         except Exception as e:
             logger.error(f"An error occurred: {e}")
         finally:
             # Clean up intermediate files
-            if intermediate_html_path and intermediate_html_path.exists():
+            if intermediate_html_path and intermediate_html_path.exists() and intermediate_html_path != args.input:
                 intermediate_html_path.unlink()
             if encrypted_path and encrypted_path.exists():
                 encrypted_path.unlink()

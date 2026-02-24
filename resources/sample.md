@@ -1,3 +1,7 @@
+# Sample Markdown
+
+This is a sample Markdown file for testing purposes.
+
 # A sample markdown file
 This is a sample markdown file to demonstrate how to use markdown syntax.
 ## Heading 2
