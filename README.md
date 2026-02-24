@@ -19,7 +19,7 @@ Use the `protect` command to convert, encrypt, and embed Markdown content into a
 
 ```bash
 python -m static_encrypt protect \
-    --input <path-to-markdown> \
+    -i <path-to-markdown> \
     --password <encryption-password> \
     [--style <path-to-css>] \
     [--allow-unsafe-password]
@@ -32,7 +32,7 @@ python -m static_encrypt protect \
 Use the `convert` command to convert a Markdown file to HTML:
 
 ```bash
-python -m static_encrypt convert --input <path-to-markdown> [--output<path-to-html>] [--style <path-to-css>]
+python -m static_encrypt convert -i <path-to-markdown> [-o <path-to-html>] [--style <path-to-css>]
 ```
 
 - `--style`: Optional. Path to a CSS file to style the generated HTML.
@@ -42,7 +42,7 @@ Use the `encrypt` command to encrypt an HTML file:
 
 ```bash
 python -m static_encrypt encrypt \
-    --input <path-to-html> \
+    -i <path-to-html> \
     --password <encryption-password> \
     [--allow-unsafe-password]
 ```
@@ -52,12 +52,12 @@ python -m static_encrypt encrypt \
 Use the `decrypt` command to decrypt an encrypted HTML file:
 
 ```bash
-python -m static_encrypt decrypt --input <path-to-encrypted-html> --password <encryption-password>
+python -m static_encrypt decrypt -i <path-to-encrypted-html> --password <encryption-password>
 ```
 
 ### Example
 ```bash
-python -m static_encrypt protect --input ./resources/sample.md --password "YourPassword123" --style ./resources/style.css
+python -m static_encrypt protect -i ./resources/sample.md --password "YourPassword123" --style ./resources/style.css
 ```
 
 This will:

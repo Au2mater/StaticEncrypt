@@ -21,7 +21,7 @@ def main():
     # Protect command
     protect_parser = subparsers.add_parser("protect", help="Convert, encrypt, and embed Markdown content.")
     protect_parser.add_argument(
-        "--input",
+        "-i", "--input",
         type=Path,
         required=True,
         help="Path to the input Markdown file.",
@@ -33,7 +33,7 @@ def main():
         help="Password for encryption.",
     )
     protect_parser.add_argument(
-        "--output",
+        "-o", "--output",
         type=Path,
         help="Optional path to the output HTML file. If omitted, a name will be generated in the current directory.",
     )
@@ -51,7 +51,7 @@ def main():
     # Encrypt command
     encrypt_parser = subparsers.add_parser("encrypt", help="Encrypt an HTML file.")
     encrypt_parser.add_argument(
-        "--input",
+        "-i", "--input",
         type=Path,
         required=True,
         help="Path to the input HTML file.",
@@ -63,7 +63,7 @@ def main():
         help="Password for encryption.",
     )
     encrypt_parser.add_argument(
-        "--output",
+        "-o", "--output",
         type=Path,
         help="Optional path to the output encrypted file. If omitted, a name will be generated in the current directory.",
     )
@@ -76,7 +76,7 @@ def main():
     # Decrypt command
     decrypt_parser = subparsers.add_parser("decrypt", help="Decrypt an encrypted HTML file.")
     decrypt_parser.add_argument(
-        "--input",
+        "-i", "--input",
         type=Path,
         required=True,
         help="Path to the encrypted HTML file.",
@@ -91,15 +91,15 @@ def main():
     # Convert command
     convert_parser = subparsers.add_parser("convert", help="Convert a Markdown file to HTML.")
     convert_parser.add_argument(
-        "--input",
+        "-i", "--input",
         type=Path,
         required=True,
         help="Path to the input Markdown file.",
     )
     convert_parser.add_argument(
-        "--output",
+        "-o", "--output",
         type=Path,
-        help="Optional path to the output HTML file. If omitted, the output file will be named {input_file.stem}.html.",
+        help="Optional path to the output HTML file. If omitted, a name will be generated in the current directory.",
     )
     convert_parser.add_argument(
         "--style",

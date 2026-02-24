@@ -87,12 +87,12 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(description="Convert a Markdown file to HTML.")
     parser.add_argument(
-        "input",
+        "-i", "--input",
         type=Path,
         help="Path to the input markdown file",
     )
     parser.add_argument(
-        "output",
+        "-o", "--output",
         type=Path,
         help="Path for the generated HTML file",
     )

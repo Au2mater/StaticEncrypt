@@ -153,7 +153,7 @@ def main() -> None:
         # Encrypt command
         encrypt_parser = subparsers.add_parser("encrypt", help="Encrypt an HTML file.")
         encrypt_parser.add_argument(
-            "input", type=Path, help="Path to the input HTML file."
+            "-i", "input", type=Path, help="Path to the input HTML file."
         )
         encrypt_parser.add_argument(
             "--password", required=True, help="Password for encryption."
@@ -169,7 +169,7 @@ def main() -> None:
             "decrypt", help="Decrypt an encrypted HTML file."
         )
         decrypt_parser.add_argument(
-            "input", type=Path, help="Path to the encrypted HTML file."
+            "-i", "input", type=Path, help="Path to the input HTML file."
         )
         decrypt_parser.add_argument(
             "--password", required=True, help="Password for decryption."
