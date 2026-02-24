@@ -163,21 +163,21 @@ def main():
 
     elif args.command == "encrypt":
         encrypt_file(
-            args.input_file,
+            args.input,
             args.password,
             allow_unsafe=getattr(args, "allow_unsafe_password", False),
         )
 
     elif args.command == "decrypt":
-        decrypt_file(args.input_file, args.password)
+        decrypt_file(args.input, args.password)
 
     elif args.command == "convert":
-        input_file = args.input_file
-        output = args.output or input_file.with_suffix(".html")
+        input = args.input
+        output = args.output or input.with_suffix(".html")
         style_file = args.style
 
-        if not input_file.is_file():
-            parser.error(f"Input file does not exist: {input_file}")
+        if not input.is_file():
+            parser.error(f"Input file does not exist: {input}")
 
         css_content = ""
         if style_file:
@@ -185,10 +185,10 @@ def main():
                 parser.error(f"CSS file does not exist: {style_file}")
             css_content = style_file.read_text(encoding="utf-8")
 
-        markdown_content = input_file.read_text(encoding="utf-8")
+        markdown_content = input.read_text(encoding="utf-8")
         html_content = convert_markdown_to_html(markdown_content, css_content)
         output.write_text(html_content, encoding="utf-8")
-        print(f"Converted {input_file} to {output}")
+        print(f"Converted {input} to {output}")
 
 
 if __name__ == "__main__":
