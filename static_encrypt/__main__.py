@@ -32,6 +32,7 @@ def main():
         help="Path to the input Markdown file.",
     )
     protect_parser.add_argument(
+        "-p",
         "--password",
         type=str,
         required=True,
