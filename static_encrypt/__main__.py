@@ -21,7 +21,7 @@ def main():
     # Protect command
     protect_parser = subparsers.add_parser("protect", help="Convert, encrypt, and embed Markdown content.")
     protect_parser.add_argument(
-        "--markdown_file",
+        "--markdown-file",
         type=Path,
         required=True,
         help="Path to the input Markdown file.",

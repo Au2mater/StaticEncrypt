@@ -19,7 +19,7 @@ Use the `protect` command to convert, encrypt, and embed Markdown content into a
 
 ```bash
 python -m static_encrypt protect \
-    --markdown_file <path-to-markdown> \
+    --markdown-file <path-to-markdown> \
     --password <encryption-password> \
     [--style <path-to-css>] \
     [--allow-unsafe-password]
@@ -57,7 +57,7 @@ python -m static_encrypt decrypt --input_file <path-to-encrypted-html> --passwor
 
 ### Example
 ```bash
-python -m static_encrypt protect --markdown_file ./resources/sample.md --password "YourPassword123" --style ./resources/style.css
+python -m static_encrypt protect --markdown-file ./resources/sample.md --password "YourPassword123" --style ./resources/style.css
 ```
 
 This will:
