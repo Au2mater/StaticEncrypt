@@ -32,7 +32,7 @@ python -m static_encrypt protect \
 Use the `convert` command to convert a Markdown file to HTML:
 
 ```bash
-python -m static_encrypt convert --input_file <path-to-markdown> [--output_file <path-to-html>] [--style <path-to-css>]
+python -m static_encrypt convert --input-file <path-to-markdown> [--output_file <path-to-html>] [--style <path-to-css>]
 ```
 
 - `--style`: Optional. Path to a CSS file to style the generated HTML.
@@ -42,7 +42,7 @@ Use the `encrypt` command to encrypt an HTML file:
 
 ```bash
 python -m static_encrypt encrypt \
-    --input_file <path-to-html> \
+    --input-file <path-to-html> \
     --password <encryption-password> \
     [--allow-unsafe-password]
 ```
@@ -52,7 +52,7 @@ python -m static_encrypt encrypt \
 Use the `decrypt` command to decrypt an encrypted HTML file:
 
 ```bash
-python -m static_encrypt decrypt --input_file <path-to-encrypted-html> --password <encryption-password>
+python -m static_encrypt decrypt --input-file <path-to-encrypted-html> --password <encryption-password>
 ```
 
 ### Example

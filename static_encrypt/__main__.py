@@ -51,7 +51,7 @@ def main():
     # Encrypt command
     encrypt_parser = subparsers.add_parser("encrypt", help="Encrypt an HTML file.")
     encrypt_parser.add_argument(
-        "--input_file",
+        "--input-file",
         type=Path,
         required=True,
         help="Path to the input HTML file.",
@@ -76,7 +76,7 @@ def main():
     # Decrypt command
     decrypt_parser = subparsers.add_parser("decrypt", help="Decrypt an encrypted HTML file.")
     decrypt_parser.add_argument(
-        "--input_file",
+        "--input-file",
         type=Path,
         required=True,
         help="Path to the encrypted HTML file.",
@@ -91,7 +91,7 @@ def main():
     # Convert command
     convert_parser = subparsers.add_parser("convert", help="Convert a Markdown file to HTML.")
     convert_parser.add_argument(
-        "--input_file",
+        "--input-file",
         type=Path,
         required=True,
         help="Path to the input Markdown file.",
