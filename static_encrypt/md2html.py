@@ -15,10 +15,6 @@ import re
 import html
 
 import markdown
-import markdown.extensions.extra
-import markdown.extensions.admonition
-import markdown.extensions.md_in_html
-import markdown.extensions.toc
 
 
 def preprocess_markdown(markdown_text: str) -> str:
