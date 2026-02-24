@@ -18,6 +18,7 @@ import markdown
 import markdown.extensions.extra
 import markdown.extensions.admonition
 import markdown.extensions.md_in_html
+import markdown.extensions.toc
 
 
 def preprocess_markdown(markdown_text: str) -> str:
@@ -56,7 +57,7 @@ def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
 
     body_html = markdown.markdown(
         markdown_text,
-        extensions=["tables", "extra", "admonition", "md_in_html"]
+        extensions=["tables", "extra", "admonition", "md_in_html", "toc"]
     )
 
     style_tag = f"<style>{css_content}</style>\n" if css_content else ""
