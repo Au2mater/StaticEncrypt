@@ -1,4 +1,4 @@
-from static_encrypt import md2html
+from staticrypt import md2html
 
 
 def test_title_from_h1(tmp_path):

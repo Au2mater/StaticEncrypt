@@ -1,6 +1,6 @@
-# StaticEncrypt
+# StatiCrypt
 
-StaticEncrypt is a Python-based tool designed to help users host secure, password-protected static sites including markdown content. It provides the following functionality:
+StatiCrypt is a Python-based tool designed to help users host secure, password-protected static sites including markdown content. It provides the following functionality:
 
 1. **Markdown to HTML Conversion**: Converts Markdown files into HTML using the `md2html.py` script.
 2. **HTML Encryption**: Encrypts HTML files with a password using the `encrypt.py` script, ensuring secure storage and transmission.
@@ -18,7 +18,7 @@ StaticEncrypt is a Python-based tool designed to help users host secure, passwor
 Use the `protect` command to convert, encrypt, and embed Markdown or HTML content into a password-protected static site:
 
 ```bash
-python -m static_encrypt protect \
+python -m staticrypt protect \
     -i <path-to-input> \
     --password <encryption-password> \
     [--style <path-to-css>] \
@@ -33,7 +33,7 @@ python -m static_encrypt protect \
 Use the `convert` command to convert a Markdown file to HTML:
 
 ```bash
-python -m static_encrypt convert -i <path-to-markdown> [-o <path-to-html>] [--style <path-to-css>]
+python -m staticrypt convert -i <path-to-markdown> [-o <path-to-html>] [--style <path-to-css>]
 ```
 
 - `--style`: Optional. Path to a CSS file to style the generated HTML.
@@ -42,7 +42,7 @@ python -m static_encrypt convert -i <path-to-markdown> [-o <path-to-html>] [--st
 Use the `encrypt` command to encrypt an HTML file:
 
 ```bash
-python -m static_encrypt encrypt \
+python -m staticrypt encrypt \
     -i <path-to-html> \
     --password <encryption-password> \
     [--allow-unsafe-password]
@@ -53,12 +53,12 @@ python -m static_encrypt encrypt \
 Use the `decrypt` command to decrypt an encrypted HTML file:
 
 ```bash
-python -m static_encrypt decrypt -i <path-to-encrypted-html> --password <encryption-password>
+python -m staticrypt decrypt -i <path-to-encrypted-html> --password <encryption-password>
 ```
 
 ### Example
 ```bash
-python -m static_encrypt protect -i ./resources/sample.md --password "YourPassword123" --style ./resources/style.css
+python -m staticrypt protect -i ./resources/sample.md --password "YourPassword123" --style ./resources/style.css
 ```
 
 This will:
@@ -75,6 +75,33 @@ This will:
 ```bash
 uv sync
 ```
+
+## Contributing
+
+Contributions are welcome! If you encounter issues or have suggestions for improvement, please open an issue or submit a pull request.
+
+
+
+```shell
+# Clone the repository 
+git clone https://github.com/Au2mater/StatiCrypt.git
+
+# installing StatiCrypt locally for development:
+uv sync --dev
+uv pip install -e .
+
+# run StatiCrypt with the example file:
+staticrypt --help
+staticrypt protect -i ./resources/sample.md --password "YourPassword123!" --style ./resources/style.css
+
+# run tests:
+pytest 
+
+# uninstall StatiCrypt after development:
+uv pip uninstall staticrypt
+```
+
+
 
 ## License
 This project is licensed under the MIT License.

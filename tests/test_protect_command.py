@@ -1,5 +1,5 @@
 import pytest
-from static_encrypt.__main__ import main
+from staticrypt.__main__ import main
 from pathlib import Path
 import argparse
 from shutil import copyfile

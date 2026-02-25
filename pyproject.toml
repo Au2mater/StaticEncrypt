@@ -1,5 +1,5 @@
 [project]
-name = "staticencrypt"
+name = "staticrypt"
 version = "0.1.1"
 description = "host secure, password-protected static sites"
 readme = "README.md"
@@ -19,3 +19,10 @@ dev = [
     "ruff>=0.15.2",
     "ty>=0.0.18",
 ]
+
+[tool.setuptools]
+packages = ["staticrypt"]
+
+[project.scripts]
+staticrypt = "staticrypt.__main__:main"
+

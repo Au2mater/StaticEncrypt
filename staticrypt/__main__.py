@@ -23,7 +23,7 @@ def main(args=None):
 
     # Protect command
     protect_parser = subparsers.add_parser(
-        "protect", help="Convert, encrypt, and embed Markdown content."
+        "protect", help="Create an encrypted password-protected HTML file from a Markdown or HTML input."
     )
     protect_parser.add_argument(
         "-i",

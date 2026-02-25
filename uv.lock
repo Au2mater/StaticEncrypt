@@ -208,7 +208,7 @@ wheels = [
 ]
 
 [[package]]
-name = "staticencrypt"
+name = "staticrypt"
 version = "0.1.1"
 source = { virtual = "." }
 dependencies = [
