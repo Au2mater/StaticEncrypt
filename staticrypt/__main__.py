@@ -1,4 +1,5 @@
 import argparse
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from .md2html import convert_markdown_to_html
 from .encrypt import encrypt_file, decrypt_file
@@ -15,10 +16,23 @@ def create_static_decrypt_html(encrypted_content: bytes, output_path: Path):
     output_path.write_text(filled_template, encoding="utf-8")
 
 
+def get_package_version() -> str:
+    try:
+        return version("staticrypt")
+    except PackageNotFoundError:
+        return "unknown"
+
+
 def main(args=None):
     import logging
 
     parser = argparse.ArgumentParser(description="StaticEncrypt CLI Tool")
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"staticrypt {get_package_version()}",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # Protect command

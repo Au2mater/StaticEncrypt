@@ -1,5 +1,5 @@
 import pytest
-from staticrypt.__main__ import main
+from staticrypt.__main__ import get_package_version, main
 from pathlib import Path
 import argparse
 from shutil import copyfile
@@ -49,3 +49,14 @@ def test_protect_command_unsupported_file(unsupported_file):
 
     with pytest.raises(ValueError, match="Unsupported file type"):
         main(args)
+
+
+def test_version_flag_outputs_package_version(monkeypatch, capsys):
+    monkeypatch.setattr("sys.argv", ["staticrypt", "--version"])
+
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+
+    assert exc_info.value.code == 0
+    output = capsys.readouterr().out.strip()
+    assert output == f"staticrypt {get_package_version()}"

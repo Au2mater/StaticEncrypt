@@ -1,6 +1,6 @@
 [project]
 name = "staticrypt"
-version = "0.1.1"
+version = "0.1.2"
 description = "host secure, password-protected static sites"
 readme = "README.md"
 requires-python = ">=3.14"
