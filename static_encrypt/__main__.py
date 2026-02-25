@@ -182,12 +182,17 @@ def main(args=None):
                 raise ValueError("Unsupported file type. Only .md and .html are supported.")
 
             # Encrypt the HTML file
-            encrypt_file(
-                intermediate_html_path,
-                args.password,
-                allow_unsafe=getattr(args, "allow_unsafe_password", False),
-            )
-
+            try:
+                encrypt_file(
+                    intermediate_html_path,
+                    args.password,
+                    allow_unsafe=getattr(args, "allow_unsafe_password", False),
+                )
+            except ValueError:
+                return
+            except Exception as e:
+                logger.error(f"Encryption failed: {e}")
+                raise
             # Read the encrypted content
             encrypted_path = intermediate_html_path.with_name(
                 f"{intermediate_html_path.stem}-encrypted.html"
@@ -208,11 +213,17 @@ def main(args=None):
                 encrypted_path.unlink()
 
     elif args.command == "encrypt":
-        encrypt_file(
-            args.input,
-            args.password,
-            allow_unsafe=getattr(args, "allow_unsafe_password", False),
-        )
+        try:
+            encrypt_file(
+                args.input,
+                args.password,
+                allow_unsafe=getattr(args, "allow_unsafe_password", False),
+            )
+        except ValueError:
+            return
+        except Exception as e:
+            logger.error(f"Encryption failed: {e}")
+            raise
 
     elif args.command == "decrypt":
         decrypt_file(args.input, args.password)

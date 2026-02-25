@@ -79,7 +79,13 @@ def encrypt_file(input_path: Path, password: str, allow_unsafe: bool = False) ->
         # Password validation can be heavy-handed for some workflows; provide a
         # flag to bypass it when the caller explicitly requests it.
         if not allow_unsafe:
-            validate_password(password)
+            try: 
+                validate_password(password)
+            except ValueError as e:
+                logger.warning(f"Password validation failed: {e}. Use --allow-unsafe-password to bypass this check if you understand the risks.")
+                raise
+            except Exception as e:
+                raise
 
         # Read the input file
         plaintext = input_path.read_text(encoding="utf-8").encode("utf-8")
