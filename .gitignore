@@ -11,3 +11,4 @@ wheels/
 resources/*.md
 *.protected.html
 .env
+*.html
