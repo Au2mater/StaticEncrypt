@@ -10,3 +10,4 @@ wheels/
 .venv
 resources/*.md
 *.protected.html
+.env
