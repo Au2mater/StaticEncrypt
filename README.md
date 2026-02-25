@@ -1,16 +1,21 @@
 # StatiCrypt
 
-StatiCrypt is a Python-based tool designed to help users host secure, password-protected static sites including markdown content. It provides the following functionality:
+StatiCrypt is a CLI tool designed to help users host secure, password-protected static sites including markdown content. 
 
-1. **Markdown to HTML Conversion**: Converts Markdown files into HTML using the `md2html.py` script.
-2. **HTML Encryption**: Encrypts HTML files with a password using the `encrypt.py` script, ensuring secure storage and transmission.
-3. **Decryption via Static HTML**: Generates a static HTML file with embedded encrypted content that can be decrypted in the browser using JavaScript.
+![alt text](resources/screenshot.png)
+
+It provides the following functionality:
+
+1. **HTML/Markdown Encryption**: Locally encrypts any HTML or Markdown document with a user-provided password.
+2. **Decryption via password**: Embeds the encrypted content in a static HTML file wrapper that allows any user to decrypt and preview it in the browser provided the correct password. The password itself is never stored in the HTML file.
+3. **Markdown to HTML Conversion**: Converts Markdown files into HTML.
+4. **Custom Styling**: Allows users to apply custom CSS styles to the generated HTML content.
 
 ## Features
 - **Secure Static Hosting**: Host password-protected static sites without requiring server-side processing.
 - **Markdown Conversion**: Easily convert Markdown files to HTML.
 - **Secure Encryption**: Protect your HTML content with AES encryption.
-- **Browser-Based Decryption**: Decrypt and render encrypted content directly in the browser.
+- **Browser-Based Decryption**: Decrypt and render encrypted content directly in the browser, client side.
 
 ## Usage
 
@@ -18,11 +23,23 @@ StatiCrypt is a Python-based tool designed to help users host secure, password-p
 Use the `protect` command to convert, encrypt, and embed Markdown or HTML content into a password-protected static site:
 
 ```bash
-python -m staticrypt protect \
+# with uvx - no installation required
+uvx staticrypt@latest protect \
     -i <path-to-input> \
     --password <encryption-password> \
+    -o <path-to-output> \
     [--style <path-to-css>] \
     [--allow-unsafe-password]
+
+# with pip:
+pip install staticrypt
+staticrypt protect \
+    -i <path-to-input> \
+    --password <encryption-password> \
+    -o <path-to-output> \
+    [--style <path-to-css>] \
+    [--allow-unsafe-password]
+
 ```
 
 - `<path-to-input>`: Path to the input file. Can be a Markdown (`.md`) or HTML (`.html`) file.
