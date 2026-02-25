@@ -1,6 +1,6 @@
 [project]
 name = "staticrypt"
-version = "0.1.2"
+version = "0.1.3"
 description = "host secure, password-protected static sites"
 readme = "README.md"
 requires-python = ">=3.14"
@@ -23,6 +23,9 @@ dev = [
 
 [tool.setuptools]
 packages = ["staticrypt"]
+
+[tool.setuptools.package-data]
+staticrypt = ["*.html"]
 
 [project.scripts]
 staticrypt = "staticrypt.__main__:main"

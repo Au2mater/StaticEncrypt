@@ -51,6 +51,33 @@ def test_protect_command_unsupported_file(unsupported_file):
         main(args)
 
 
+def test_protect_default_output_in_input_directory(tmp_path, monkeypatch):
+    """When output is omitted, protect writes next to the input file."""
+    input_dir = tmp_path / "input"
+    input_dir.mkdir()
+    input_path = input_dir / "sample.md"
+    copyfile("resources/sample.md", input_path)
+
+    other_cwd = tmp_path / "other-cwd"
+    other_cwd.mkdir()
+    monkeypatch.chdir(other_cwd)
+
+    args = argparse.Namespace(
+        command="protect",
+        input=input_path,
+        password="testpassword",
+        output=None,
+        style=None,
+        allow_unsafe_password=True,
+        minify="true",
+    )
+
+    main(args)
+
+    expected_output = input_dir / "sample.protected.html"
+    assert expected_output.exists(), f"Output file {expected_output} was not created."
+
+
 def test_version_flag_outputs_package_version(monkeypatch, capsys):
     monkeypatch.setattr("sys.argv", ["staticrypt", "--version"])
 

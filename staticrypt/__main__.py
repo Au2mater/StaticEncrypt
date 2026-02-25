@@ -1,4 +1,5 @@
 import argparse
+from importlib import resources
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from .md2html import convert_markdown_to_html
@@ -8,8 +9,9 @@ from .minify import minify_html_content
 
 def create_static_decrypt_html(encrypted_content: bytes, output_path: Path):
     """Generate a static HTML file with embedded encrypted content."""
-    template_path = Path(__file__).parent / "decrypt_template.html"
-    template = template_path.read_text(encoding="utf-8")
+    template = resources.files("staticrypt").joinpath("decrypt_template.html").read_text(
+        encoding="utf-8"
+    )
     filled_template = template.replace(
         "ENCRYPTED_CONTENT_PLACEHOLDER", str(list(encrypted_content))
     )
@@ -57,7 +59,7 @@ def main(args=None):
         "-o",
         "--output",
         type=Path,
-        help="Optional path to the output HTML file. If omitted, a name will be generated in the current directory.",
+        help="Optional path to the output HTML file. If omitted, a name will be generated in the input file directory.",
     )
     protect_parser.add_argument(
         "--style",
@@ -178,7 +180,7 @@ def main(args=None):
             # Determine output location
             if args.output is None:
                 default_name = f"{args.input.stem}.protected.html"
-                args.output = Path.cwd() / default_name
+                args.output = args.input.parent / default_name
 
             logger.info(f"Output file: {args.output}")
 
