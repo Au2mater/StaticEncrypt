@@ -103,5 +103,6 @@ uv pip uninstall staticrypt
 
 
 
-## License
-This project is licensed under the MIT License.
+## License<a id="license"></a>
+
+This repository is licensed under the [MIT License](LICENSE). See the LICENSE file for more details.
