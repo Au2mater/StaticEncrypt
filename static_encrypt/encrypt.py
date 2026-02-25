@@ -109,8 +109,8 @@ def encrypt_file(input_path: Path, password: str, allow_unsafe: bool = False) ->
         with output_path.open("wb") as f:
             f.write(salt + iv + ciphertext)
 
-        print(f"Encrypted file written to: {output_path}")
-        logger.info(f"Encryption successful: {output_path}")
+        # Remove the misleading log message about the intermediate file
+        # logger.info(f"Encryption successful: {output_path}")
     except Exception as e:
         logger.error(f"Encryption failed: {e}")
         raise
