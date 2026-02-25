@@ -84,7 +84,7 @@ def encrypt_file(input_path: Path, password: str, allow_unsafe: bool = False) ->
             except ValueError as e:
                 logger.warning(f"Password validation failed: {e}. Use --allow-unsafe-password to bypass this check if you understand the risks.")
                 raise
-            except Exception as e:
+            except Exception:
                 raise
 
         # Read the input file

@@ -163,7 +163,7 @@
                     const decoder = new TextDecoder();
                     const plaintext = decoder.decode(decryptedBuffer);
 
-                    if (plaintext.trim().startsWith('<!DOCTYPE html>')) {
+                    if (plaintext.trim().toLowerCase().startsWith('<!doctype html>')) {
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(plaintext, 'text/html');
                         const h1 = doc.querySelector('h1');

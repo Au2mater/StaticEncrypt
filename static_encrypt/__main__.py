@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 from .md2html import convert_markdown_to_html
 from .encrypt import encrypt_file, decrypt_file
+from .minify import minify_html_content
 
 
 def create_static_decrypt_html(encrypted_content: bytes, output_path: Path):
@@ -53,6 +54,15 @@ def main(args=None):
         "--allow-unsafe-password",
         action="store_true",
         help="Skip password strength validation when encrypting (unsafe).",
+    )
+    protect_parser.add_argument(
+        "--minify",
+        nargs="?",
+        const="true",
+        type=str,
+        choices=["true", "false", "1", "0"],
+        default="true",
+        help="Enable or disable HTML minification (default: true).",
     )
 
     # Encrypt command
@@ -122,6 +132,15 @@ def main(args=None):
         type=Path,
         help="Path to an optional CSS file to include in the HTML.",
     )
+    convert_parser.add_argument(
+        "--minify",
+        nargs="?",
+        const="true",
+        type=str,
+        choices=["true", "false", "1", "0"],
+        default="true",
+        help="Enable or disable HTML minification (default: true).",
+    )
 
     if args is None:
         args = parser.parse_args()
@@ -130,6 +149,12 @@ def main(args=None):
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
     logger = logging.getLogger(__name__)
+
+    # Ensure 'minify' is added to the args namespace for all commands
+    args.minify = args.minify if hasattr(args, 'minify') else 'true'
+
+    # Ensure 'minify' attribute exists in args
+    minify = getattr(args, 'minify', False)
 
     if args.command == "protect":
         intermediate_html_path = None
@@ -155,11 +180,15 @@ def main(args=None):
                         parser.error(f"CSS file does not exist: {args.style}")
                     css_content = args.style.read_text(encoding="utf-8")
 
-                html_content = convert_markdown_to_html(markdown_content, css_content)
+                minify = args.minify.lower() not in ["false", "0"]
+                html_content = convert_markdown_to_html(
+                    markdown_content, css_content, minify=minify
+                )
 
                 # Save intermediate HTML file
-                intermediate_html_path = args.input.with_suffix(".html")
+                intermediate_html_path = args.input.with_suffix(".intermediate.html")
                 intermediate_html_path.write_text(html_content, encoding="utf-8")
+
             elif input_extension == ".html":
                 # Handle HTML input directly
                 intermediate_html_path = args.input
@@ -177,6 +206,13 @@ def main(args=None):
                     # Save modified HTML to a temporary file
                     intermediate_html_path = args.input.with_suffix(".styled.html")
                     intermediate_html_path.write_text(html_content, encoding="utf-8")
+
+                # Minify the HTML content before encryption
+                html_content = intermediate_html_path.read_text(encoding="utf-8")
+                minified_html = minify_html_content(html_content)
+                # Ensure the original input file is not overwritten
+                if intermediate_html_path != args.input:
+                    intermediate_html_path.write_text(minified_html, encoding="utf-8")
             else:
                 logger.error(f"Unsupported file type: {input_extension}")
                 raise ValueError("Unsupported file type. Only .md and .html are supported.")
@@ -201,6 +237,11 @@ def main(args=None):
 
             # Create the static decrypt HTML file
             create_static_decrypt_html(encrypted_content, args.output)
+
+            # Always minify the decrypt_template
+            decrypt_template_content = args.output.read_text(encoding="utf-8")
+            minified_template = minify_html_content(decrypt_template_content)
+            args.output.write_text(minified_template, encoding="utf-8")
         except ValueError:
             raise
         except Exception as e:
@@ -243,7 +284,10 @@ def main(args=None):
             css_content = style_file.read_text(encoding="utf-8")
 
         markdown_content = input.read_text(encoding="utf-8")
-        html_content = convert_markdown_to_html(markdown_content, css_content)
+        minify = args.minify.lower() not in ["false", "0"]
+        html_content = convert_markdown_to_html(
+            markdown_content, css_content, minify=minify
+        )
         output.write_text(html_content, encoding="utf-8")
         print(f"Converted {input} to {output}")
 

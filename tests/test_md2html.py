@@ -16,5 +16,5 @@ def test_default_title_when_no_h1(tmp_path):
 def test_checkboxes_and_strikethrough():
     md = """[x] ~~Book Nikko World Heritage tour (if doing Friday)~~"""
     html = md2html.convert_markdown_to_html(md)
-    assert '<input type="checkbox" checked>' in html
+    assert '<input checked type=checkbox>' in html
     assert "<del>Book Nikko World Heritage tour (if doing Friday)</del>" in html

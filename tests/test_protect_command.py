@@ -6,7 +6,7 @@ from shutil import copyfile
 
 @pytest.mark.parametrize("input_file, expected_output", [
     ("resources/sample.md", "sample.protected.html"),
-    ("resources/sample.html", "sample.protected.html"),
+    ("resources/sample-html.html", "sample.protected.html"),
 ])
 def test_protect_command(input_file, expected_output, tmp_path):
     """Test the protect command with both Markdown and HTML files."""

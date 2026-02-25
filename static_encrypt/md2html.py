@@ -15,6 +15,7 @@ import re
 import html
 
 import markdown
+from .minify import minify_html_content
 
 
 def preprocess_markdown(markdown_text: str) -> str:
@@ -31,17 +32,17 @@ def preprocess_markdown(markdown_text: str) -> str:
     return markdown_text
 
 
-def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
-    """Convert markdown string to HTML with optional CSS.
+def convert_markdown_to_html(markdown_text: str, css_content: str = "", minify: bool = True) -> str:
+    """Convert markdown string to HTML with optional CSS and minification.
 
     Args:
         markdown_text: A markdown-formatted string.
         css_content: A string containing CSS to embed in the HTML.
+        minify: Whether to minify the resulting HTML.
 
     Returns:
         A string of HTML wrapped in a full document.
     """
-
     # Preprocess markdown for custom syntax
     markdown_text = preprocess_markdown(markdown_text)
 
@@ -59,7 +60,7 @@ def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
 
     style_tag = f"<style>{css_content}</style>\n" if css_content else ""
 
-    return (
+    html_content = (
         "<!DOCTYPE html>\n"
         '<html lang="en">\n'
         "<head>\n"
@@ -73,6 +74,11 @@ def convert_markdown_to_html(markdown_text: str, css_content: str = "") -> str:
         "</body>\n"
         "</html>\n"
     )
+
+    if minify:
+        html_content = minify_html_content(html_content, verbose=True)
+
+    return html_content
 
 
 def main() -> None:
@@ -101,6 +107,11 @@ def main() -> None:
         type=Path,
         help="Path to an optional CSS file to include in the HTML.",
     )
+    parser.add_argument(
+        "--minify",
+        action="store_true",
+        help="Whether to minify the resulting HTML.",
+    )
     args = parser.parse_args()
 
     input_path = args.input
@@ -117,7 +128,8 @@ def main() -> None:
         css_content = style_path.read_text(encoding="utf-8")
 
     markdown_content = input_path.read_text(encoding="utf-8")
-    html_content = convert_markdown_to_html(markdown_content, css_content)
+    html_content = convert_markdown_to_html(markdown_content, css_content, args.minify)
+    html_content = minify_html_content(html_content)
     output_path.write_text(html_content, encoding="utf-8")
 
 
